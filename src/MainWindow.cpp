@@ -58,9 +58,15 @@ MainWindow::MainWindow(QWidget *parent)
     // Setup Update Overlay
     m_updateOverlay = new Update(m_centralWidget);
     
-    // Check for updates after a short delay
-    QTimer::singleShot(2000, this, [this]() {
-        m_updateOverlay->checkForUpdates();
+    // Setup User Agreement Overlay
+    m_userAgreementOverlay = new UserAgreementOverlay(m_centralWidget);
+    connect(m_userAgreementOverlay, &UserAgreementOverlay::agreementAccepted, this, [this]() {
+        // Start scanning after agreement is accepted
+        QTimer::singleShot(100, this, [this]() {
+            m_loadingOverlay->showOverlay();
+            m_scanCheckTimer->start();
+            FileManager::instance().startScanning();
+        });
     });
     
     // Setup scan check timer - poll every 500ms to check if scanning is complete
@@ -71,14 +77,17 @@ MainWindow::MainWindow(QWidget *parent)
             Logger::instance().logInfo("MainWindow", "Scan complete detected via polling - hiding overlay");
             m_scanCheckTimer->stop();
             m_loadingOverlay->hideOverlay();
+            
+            // Check for updates after loading is done
+            QTimer::singleShot(500, this, [this]() {
+                m_updateOverlay->checkForUpdates();
+            });
         }
     });
     
-    // Show overlay and start scanning (delayed to ensure UI is ready)
+    // Check User Agreement on startup (delayed to ensure UI is ready)
     QTimer::singleShot(100, this, [this]() {
-        m_loadingOverlay->showOverlay();
-        m_scanCheckTimer->start();
-        FileManager::instance().startScanning();
+        m_userAgreementOverlay->checkAgreement();
     });
 
     // Initialize TagManager (it will listen to FileManager scan events)
@@ -176,6 +185,9 @@ void MainWindow::setupUi() {
     connect(m_settingsPage, &SettingsPage::themeChanged, this, &MainWindow::onThemeChanged);
     connect(m_settingsPage, &SettingsPage::debugModeChanged, this, &MainWindow::onDebugModeChanged);
     connect(m_settingsPage, &SettingsPage::sidebarCompactChanged, this, &MainWindow::onSidebarCompactChanged);
+    connect(m_settingsPage, &SettingsPage::showUserAgreement, this, [this]() {
+        m_userAgreementOverlay->showAgreement(true);
+    });
     m_mainStack->addWidget(m_settingsPage);
 
     m_configPage = new ConfigPage();
@@ -684,6 +696,7 @@ void MainWindow::onLanguageChanged() {
         m_currentLang = lang;
         LocalizationManager::instance().loadLanguage(lang);
         updateTexts();
+        m_userAgreementOverlay->updateTexts();
         
         LocalizationManager& loc = LocalizationManager::instance();
         CustomMessageBox::information(this, 
@@ -698,6 +711,7 @@ void MainWindow::onThemeChanged() {
     m_settingsPage->updateTheme();
     m_configPage->updateTheme();
     m_updateOverlay->updateTheme();
+    m_userAgreementOverlay->updateTheme();
     
     // Update ToolsPage theme (must be after applyTheme to override global styles)
     m_toolsPage->updateTheme();

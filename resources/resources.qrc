@@ -9,6 +9,7 @@
         <file>localization/en_US/Error.json</file>
         <file>localization/en_US/ToolsPage.json</file>
         <file>localization/en_US/Update.json</file>
+        <file>localization/en_US/UserAgreement.json</file>
         <file>localization/zh_CN/MainWindow.json</file>
         <file>localization/zh_CN/SettingsPage.json</file>
         <file>localization/zh_CN/ConfigPage.json</file>
@@ -17,6 +18,7 @@
         <file>localization/zh_CN/Error.json</file>
         <file>localization/zh_CN/ToolsPage.json</file>
         <file>localization/zh_CN/Update.json</file>
+        <file>localization/zh_CN/UserAgreement.json</file>
         <file>localization/zh_TW/MainWindow.json</file>
         <file>localization/zh_TW/SettingsPage.json</file>
         <file>localization/zh_TW/ConfigPage.json</file>
@@ -25,6 +27,7 @@
         <file>localization/zh_TW/Error.json</file>
         <file>localization/zh_TW/ToolsPage.json</file>
         <file>localization/zh_TW/Update.json</file>
+        <file>localization/zh_TW/UserAgreement.json</file>
         <file>icons/palette.svg</file>
         <file>icons/globe.svg</file>
         <file>icons/sidebar.svg</file>
@@ -36,5 +39,9 @@
         <file>icons/folder-game.svg</file>
         <file>icons/package.svg</file>
         <file>openSource.json</file>
+        <file>UserAgreement/version.json</file>
+        <file>UserAgreement/en_US.md</file>
+        <file>UserAgreement/zh_CN.md</file>
+        <file>UserAgreement/zh_TW.md</file>
     </qresource>
 </RCC>

@@ -18,6 +18,7 @@ public:
 
 signals:
     void closeClicked();
+    void showUserAgreement();
     void themeChanged();
     void languageChanged();
     void debugModeChanged(bool enabled);
@@ -43,6 +44,7 @@ private:
     QLabel *m_versionLabel;
     QWidget *m_openSourceArea;
     QPushButton *m_openSourceToggleBtn;
+    QPushButton *m_userAgreementBtn;
     QPushButton *m_openLogBtn;
     QPushButton *m_pinToStartBtn;
     QPushButton *m_clearCacheBtn;

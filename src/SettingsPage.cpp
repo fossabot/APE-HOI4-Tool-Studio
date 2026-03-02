@@ -185,11 +185,12 @@ void SettingsPage::setupUi() {
     githubLink->setCursor(Qt::PointingHandCursor);
     connect(githubLink, &QPushButton::clicked, [this](){ openUrl("https://github.com/Team-APE-RIP/APE-HOI4-Tool-Studio"); });
 
-    QPushButton *licenseLink = new QPushButton("LICENSE");
-    licenseLink->setObjectName("LicenseLink");
-    licenseLink->setFlat(true);
-    licenseLink->setCursor(Qt::PointingHandCursor);
-    connect(licenseLink, &QPushButton::clicked, [this](){ openUrl("https://github.com/Team-APE-RIP/APE-HOI4-Tool-Studio/blob/main/LICENSE"); });
+    m_userAgreementBtn = new QPushButton("User Agreement");
+    m_userAgreementBtn->setObjectName("UserAgreementBtn");
+    m_userAgreementBtn->setFlat(true);
+    m_userAgreementBtn->setCursor(Qt::PointingHandCursor);
+    m_userAgreementBtn->setStyleSheet("color: #007AFF; text-align: left; background-color: transparent; border: none; font-weight: bold;");
+    connect(m_userAgreementBtn, &QPushButton::clicked, this, &SettingsPage::showUserAgreement);
 
     m_openSourceToggleBtn = new QPushButton("Open Source Libraries ▼");
     m_openSourceToggleBtn->setObjectName("OpenSourceBtn");
@@ -278,7 +279,7 @@ void SettingsPage::setupUi() {
     aboutRowLayout->addLayout(infoLayout);
     aboutRowLayout->addWidget(copyright);
     aboutRowLayout->addWidget(githubLink);
-    aboutRowLayout->addWidget(licenseLink);
+    aboutRowLayout->addWidget(m_userAgreementBtn);
     aboutRowLayout->addWidget(m_openSourceToggleBtn);
     aboutRowLayout->addWidget(m_openSourceArea);
     
@@ -420,6 +421,8 @@ void SettingsPage::updateTexts() {
     
     QPushButton *githubLink = findChild<QPushButton*>("GithubLink");
     if(githubLink) githubLink->setText(loc.getString("SettingsPage", "GithubLink"));
+
+    if(m_userAgreementBtn) m_userAgreementBtn->setText(loc.getString("SettingsPage", "UserAgreementBtn"));
 
     if(m_openSourceToggleBtn) m_openSourceToggleBtn->setText(loc.getString("SettingsPage", "OpenSourceBtn"));
 }

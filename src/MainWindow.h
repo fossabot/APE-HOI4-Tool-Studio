@@ -15,6 +15,7 @@
 #include "ToolsPage.h"
 #include "LoadingOverlay.h"
 #include "Update.h"
+#include "UserAgreementOverlay.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -101,6 +102,9 @@ private:
     
     // Update Overlay
     Update *m_updateOverlay;
+    
+    // User Agreement Overlay
+    UserAgreementOverlay *m_userAgreementOverlay;
     
     // Sidebar collapse delay timer
     QTimer *m_sidebarCollapseTimer;
