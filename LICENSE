@@ -1,0 +1,104 @@
+            Team APE:RIP Source Code License Agreement
+                       APE HOI4 Tool Studio
+                     Version 1, March 3, 2026
+
+ Copyright (C) 2026 Team APE:RIP. All rights reserved.
+ Everyone is permitted to copy and distribute verbatim copies of this
+ license document, but changing it is not allowed.
+
+  This License Agreement (hereinafter referred to as "this Agreement") 
+applies to the source code, compiled binary programs, and related 
+documentation of APE HOI4 Tool Studio (hereinafter collectively 
+referred to as "the Software"). By obtaining, using, modifying, or 
+distributing the source code or binary files of the Software, you 
+fully accept all the terms of this Agreement.
+
+  1. Authorization and License.
+
+  Subject to strict compliance with the terms of this Agreement, 
+Team APE:RIP grants you a free, non-exclusive, non-transferable right 
+allowing you to:
+   
+  a) Download, compile, run, and modify the source code of the 
+  Software for the purposes of personal learning and the development 
+  of non-profit digital derivative works.
+   
+  b) Distribute unmodified copies of the Software or your modified 
+  derivative versions on a non-commercial basis.
+
+  2. Restrictions.
+  
+  When exercising the above rights, you must strictly comply with the 
+following restrictions. Any violation of the following provisions will 
+result in the immediate termination of your authorization:
+   
+  a) Prohibition of Commercialization: It is strictly prohibited to 
+  use the Software (including its source code, binary programs, and 
+  modified derivative versions) for any form of commercial purpose. 
+  This includes, but is not limited to: sharing, publishing, selling, 
+  renting, sublicensing for a fee, placing it behind a paywall, or 
+  providing it to others as part of an independent commercial product 
+  or service.
+  
+  b) Prohibition of Tampering with Copyright and Displayed Content: It  
+  is strictly prohibited to remove, minimize, block, or modify the 
+  copyright notices, team logos, and any notices of Team APE:RIP in 
+  the Software. It is strictly prohibited to block, remove, or modify 
+  all advertising and sponsored content displayed on the main 
+  interface and other locations by any means of code modification or 
+  third-party injection.
+  
+  c) Prohibition of Reverse Engineering: Unless and only to the extent 
+  required by third-party licensing terms governing the use of certain 
+  included open-source components, you may not reverse engineer, 
+  decompile, or disassemble the Software, or otherwise attempt to 
+  derive the source code of the Software.
+
+  3. Source Code Modification and Distribution Specifications.
+  
+  If you modify the source code of the Software and distribute it 
+(i.e., create a derivative version), you must comply with the 
+following specifications:
+   
+  a) Share Alike: Your derivative version must and can only be made 
+  public and released under this Agreement. You may not attach any 
+  other third-party open-source licenses or more permissive terms to 
+  the derivative version.
+  
+  b) Prominent Notices: You must include prominent notices in the 
+  modified source code files stating that you changed the files and 
+  the date of any change, and clearly indicate that the version is an 
+  unofficial modified version and must not be passed off as an 
+  official release by Team APE:RIP.
+
+  4. Third-Party Tools and Module Development Specifications.
+  
+  The Software supports loading third-party tools through a modular 
+system. We encourage community developers to write third-party tools 
+for the Software, but the following specifications must be followed:
+   
+  a) Independent License: Third-party tools loaded as independent 
+  Dynamic Link Libraries (DLLs) or in other forms may have independent 
+  licenses, provided that the codebase of the tool does not contain 
+  the protected core code of the Software.
+  
+  b) Compliant Interaction: When third-party tools interact with the 
+  main program of the Software, they must not contain features 
+  designed to bypass the restrictions in Section 2 of this Agreement. 
+  It is strictly prohibited to develop or distribute tool modules that 
+  can be used to block main program advertisements or crack main 
+  program restrictions.
+  
+  c) Official Inclusion: If you wish to merge the third-party tool you 
+  developed into the official code repository of Team APE:RIP, you 
+  must agree to license it to Team APE:RIP under this Agreement.
+
+  5. Disclaimer of Warranty.
+  
+  The source code of the Software is provided "as is," without 
+warranty of any kind, express or implied, including but not limited to 
+the warranties of merchantability, fitness for a particular purpose, 
+and noninfringement. In no event shall Team APE:RIP or the copyright 
+holders be liable for any claim, damages, or other liability arising 
+from, out of, or in connection with the Software or the use or other 
+dealings in the Software.

@@ -130,6 +130,8 @@ set(APP_SOURCES
     src/Update.h
     src/UserAgreementOverlay.cpp
     src/UserAgreementOverlay.h
+    src/Advertisement.cpp
+    src/Advertisement.h
     ${QRC_FILES}
     ${TS_FILES}
 )

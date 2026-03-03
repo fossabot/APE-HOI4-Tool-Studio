@@ -16,6 +16,7 @@
 #include "LoadingOverlay.h"
 #include "Update.h"
 #include "UserAgreementOverlay.h"
+#include "Advertisement.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -57,6 +58,9 @@ private slots:
     // Sidebar Animation
     void expandSidebar();
     void collapseSidebar();
+    
+    // Advertisement
+    void checkAndShowAdvertisement();
 
 private:
     void setupUi();
@@ -105,6 +109,10 @@ private:
     
     // User Agreement Overlay
     UserAgreementOverlay *m_userAgreementOverlay;
+    
+    // Advertisement Overlay
+    Advertisement *m_advertisementOverlay;
+    QTimer *m_adTimer;
     
     // Sidebar collapse delay timer
     QTimer *m_sidebarCollapseTimer;

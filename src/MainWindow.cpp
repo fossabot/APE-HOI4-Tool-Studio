@@ -9,6 +9,9 @@
 #include "ToolManager.h"
 #include "ToolProxyInterface.h"
 #include "Logger.h"
+#include <QStandardPaths>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
@@ -58,6 +61,12 @@ MainWindow::MainWindow(QWidget *parent)
     // Setup Update Overlay
     m_updateOverlay = new Update(m_centralWidget);
     
+    // Setup Advertisement Overlay
+    m_advertisementOverlay = new Advertisement(m_centralWidget);
+    m_adTimer = new QTimer(this);
+    m_adTimer->setInterval(15 * 60 * 1000); // 15 minutes
+    connect(m_adTimer, &QTimer::timeout, m_advertisementOverlay, &Advertisement::showAd);
+    
     // Setup User Agreement Overlay
     m_userAgreementOverlay = new UserAgreementOverlay(m_centralWidget);
     connect(m_userAgreementOverlay, &UserAgreementOverlay::agreementAccepted, this, [this]() {
@@ -78,9 +87,10 @@ MainWindow::MainWindow(QWidget *parent)
             m_scanCheckTimer->stop();
             m_loadingOverlay->hideOverlay();
             
-            // Check for updates after loading is done
+            // Check for updates and show advertisement after loading is done
             QTimer::singleShot(500, this, [this]() {
                 m_updateOverlay->checkForUpdates();
+                checkAndShowAdvertisement();
             });
         }
     });
@@ -712,6 +722,7 @@ void MainWindow::onThemeChanged() {
     m_configPage->updateTheme();
     m_updateOverlay->updateTheme();
     m_userAgreementOverlay->updateTheme();
+    m_advertisementOverlay->updateTheme();
     
     // Update ToolsPage theme (must be after applyTheme to override global styles)
     m_toolsPage->updateTheme();
@@ -930,6 +941,26 @@ void MainWindow::onGamePathChanged() {
     m_loadingOverlay->showOverlay();
     m_scanCheckTimer->start();
     FileManager::instance().startScanning();
+}
+
+void MainWindow::checkAndShowAdvertisement() {
+    QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    QString filePath = tempPath + "/APE-HOI4-Tool-Studio/UAVCheck.json";
+    
+    QFile file(filePath);
+    if (file.exists() && file.open(QIODevice::ReadOnly)) {
+        QByteArray data = file.readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(data);
+        if (doc.isObject()) {
+            QJsonObject obj = doc.object();
+            if (obj.contains("UAVCheck") && obj["UAVCheck"].toString() != "0.0.0.0") {
+                // Agreement accepted, show ad and start timer
+                m_advertisementOverlay->showAd();
+                m_adTimer->start();
+            }
+        }
+        file.close();
+    }
 }
 
 void MainWindow::onToolProcessCrashed(const QString& toolId, const QString& error) {
