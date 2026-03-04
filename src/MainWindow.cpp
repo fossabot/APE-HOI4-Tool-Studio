@@ -947,19 +947,42 @@ void MainWindow::checkAndShowAdvertisement() {
     QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
     QString filePath = tempPath + "/APE-HOI4-Tool-Studio/UAVCheck.json";
     
+    Logger::instance().logInfo("MainWindow", "Checking advertisement condition. File path: " + filePath);
+    
     QFile file(filePath);
-    if (file.exists() && file.open(QIODevice::ReadOnly)) {
-        QByteArray data = file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        if (doc.isObject()) {
-            QJsonObject obj = doc.object();
-            if (obj.contains("UAVCheck") && obj["UAVCheck"].toString() != "0.0.0.0") {
-                // Agreement accepted, show ad and start timer
-                m_advertisementOverlay->showAd();
-                m_adTimer->start();
+    if (file.exists()) {
+        if (file.open(QIODevice::ReadOnly)) {
+            QByteArray data = file.readAll();
+            QJsonParseError parseError;
+            QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+            
+            if (parseError.error != QJsonParseError::NoError) {
+                Logger::instance().logError("MainWindow", "Failed to parse UAVCheck.json: " + parseError.errorString());
+            } else if (doc.isObject()) {
+                QJsonObject obj = doc.object();
+                if (obj.contains("UAVCheck")) {
+                    QString uavCheckValue = obj["UAVCheck"].toString();
+                    Logger::instance().logInfo("MainWindow", "UAVCheck value: " + uavCheckValue);
+                    if (uavCheckValue != "0.0.0.0") {
+                        // Agreement accepted, show ad and start timer
+                        Logger::instance().logInfo("MainWindow", "Agreement accepted, showing advertisement.");
+                        m_advertisementOverlay->showAd();
+                        m_adTimer->start();
+                    } else {
+                        Logger::instance().logInfo("MainWindow", "Agreement not accepted (0.0.0.0), skipping advertisement.");
+                    }
+                } else {
+                    Logger::instance().logError("MainWindow", "UAVCheck.json does not contain 'UAVCheck' key.");
+                }
+            } else {
+                Logger::instance().logError("MainWindow", "UAVCheck.json is not a JSON object.");
             }
+            file.close();
+        } else {
+            Logger::instance().logError("MainWindow", "Failed to open UAVCheck.json: " + file.errorString());
         }
-        file.close();
+    } else {
+        Logger::instance().logInfo("MainWindow", "UAVCheck.json does not exist. Skipping advertisement.");
     }
 }
 

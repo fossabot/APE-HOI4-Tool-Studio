@@ -1,6 +1,7 @@
 #include "Advertisement.h"
 #include "LocalizationManager.h"
 #include "ConfigManager.h"
+#include "Logger.h"
 #include <QPainter>
 #include <QEvent>
 #include <QFile>
@@ -10,11 +11,13 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDebug>
+#include <QPainterPath>
 
 Advertisement::Advertisement(QWidget *parent)
     : QWidget(parent)
     , m_countdownSeconds(5)
 {
+    setAttribute(Qt::WA_TranslucentBackground);
     hide();
     
     // Create container
@@ -62,31 +65,45 @@ Advertisement::~Advertisement() {
 }
 
 void Advertisement::loadAdData() {
-    QFile file(":/resources/advertisement/url.json");
+    QString resPath = ":/advertisement/url.json";
+    QString localPath = "resources/advertisement/url.json";
+    
+    QFile file(resPath);
+    Logger::instance().logInfo("Advertisement", "Attempting to load ad data from: " + resPath);
+    
     // Fallback to local file if resource not found
     if (!file.exists()) {
-        file.setFileName("resources/advertisement/url.json");
+        Logger::instance().logInfo("Advertisement", "Resource not found, falling back to: " + localPath);
+        file.setFileName(localPath);
     }
     
     if (file.open(QIODevice::ReadOnly)) {
         QByteArray data = file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        if (doc.isArray()) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+        
+        if (parseError.error != QJsonParseError::NoError) {
+            Logger::instance().logError("Advertisement", "JSON parse error: " + parseError.errorString());
+        } else if (doc.isArray()) {
             QJsonArray array = doc.array();
             for (const QJsonValue &value : array) {
                 if (value.isObject()) {
                     m_adList.append(value.toObject());
                 }
             }
+            Logger::instance().logInfo("Advertisement", QString("Successfully loaded %1 ads").arg(m_adList.size()));
+        } else {
+            Logger::instance().logError("Advertisement", "JSON document is not an array");
         }
         file.close();
     } else {
-        qWarning() << "Failed to load advertisement data";
+        Logger::instance().logError("Advertisement", "Failed to open advertisement data file: " + file.errorString());
     }
 }
 
 bool Advertisement::selectRandomAd() {
     if (m_adList.isEmpty()) {
+        Logger::instance().logError("Advertisement", "Cannot select random ad: ad list is empty");
         return false;
     }
     
@@ -107,27 +124,39 @@ bool Advertisement::selectRandomAd() {
     m_currentText = ad["text"].toString();
     m_currentUrl = ad["url"].toString();
     
-    // Load image
-    QString imagePath = QString(":/resources/advertisement/%1.webp").arg(idStr);
-    QPixmap pixmap(imagePath);
+    Logger::instance().logInfo("Advertisement", QString("Selected ad ID: %1, Text: %2").arg(idStr, m_currentText));
     
-    // Fallback to local file
-    if (pixmap.isNull()) {
-        imagePath = QString("resources/advertisement/%1.webp").arg(idStr);
-        pixmap.load(imagePath);
+    // Load image
+    QString resPath = QString(":/advertisement/%1.png").arg(idStr);
+    QString localPath = QString("resources/advertisement/%1.png").arg(idStr);
+    
+    QPixmap pixmap;
+    bool loaded = pixmap.load(resPath);
+    
+    if (loaded) {
+        Logger::instance().logInfo("Advertisement", "Loaded image from resource: " + resPath);
+    } else {
+        Logger::instance().logInfo("Advertisement", "Failed to load from resource, trying local: " + localPath);
+        loaded = pixmap.load(localPath);
+        if (loaded) {
+            Logger::instance().logInfo("Advertisement", "Loaded image from local file: " + localPath);
+        }
     }
     
-    if (!pixmap.isNull()) {
+    if (loaded && !pixmap.isNull()) {
         m_imageLabel->setPixmap(pixmap);
         return true;
     } else {
-        qWarning() << "Failed to load advertisement image:" << imagePath;
+        Logger::instance().logError("Advertisement", "Failed to load advertisement image for ID: " + idStr);
         return false;
     }
 }
 
 void Advertisement::showAd() {
+    Logger::instance().logInfo("Advertisement", "showAd() called");
+    
     if (!selectRandomAd()) {
+        Logger::instance().logError("Advertisement", "Aborting showAd() because selectRandomAd() failed");
         return; // Don't show if no ad could be loaded
     }
     
@@ -179,7 +208,6 @@ void Advertisement::onImageClicked() {
 void Advertisement::updateTheme() {
     bool isDark = ConfigManager::instance().isCurrentThemeDark();
     
-    QString bgColor = isDark ? "rgba(30, 30, 30, 0.95)" : "rgba(255, 255, 255, 0.95)";
     QString containerBg = isDark ? "#2d2d2d" : "#ffffff";
     QString textColor = isDark ? "#ffffff" : "#333333";
     QString borderColor = isDark ? "#3d3d3d" : "#e0e0e0";
@@ -188,12 +216,9 @@ void Advertisement::updateTheme() {
     QString btnDisabledBg = isDark ? "#555555" : "#cccccc";
     
     setStyleSheet(QString(
-        "Advertisement {"
-        "   background-color: %1;"
-        "}"
         "#adContainer {"
-        "   background-color: %2;"
-        "   border: 1px solid %3;"
+        "   background-color: %1;"
+        "   border: 1px solid %2;"
         "   border-radius: 10px;"
         "}"
         "#adTitle {"
@@ -213,16 +238,26 @@ void Advertisement::updateTheme() {
         "   background-color: %6;"
         "}"
         "#adCloseButton:disabled {"
-        "   background-color: %7;"
+        "   background-color: %6;"
         "   color: #888888;"
         "}"
-    ).arg(bgColor, containerBg, borderColor, textColor, btnBg, btnBgHover, btnDisabledBg));
+    ).arg(containerBg, borderColor, textColor, btnBg, btnBgHover, btnDisabledBg));
 }
 
 void Advertisement::paintEvent(QPaintEvent *event) {
+    Q_UNUSED(event);
+    
     QPainter painter(this);
-    painter.fillRect(rect(), palette().color(QPalette::Window));
-    QWidget::paintEvent(event);
+    painter.setRenderHint(QPainter::Antialiasing);
+    
+    // Semi-transparent background with rounded corners on all sides to match main window
+    QPainterPath path;
+    QRectF r = rect();
+    qreal radius = 10;
+    
+    path.addRoundedRect(r, radius, radius);
+    
+    painter.fillPath(path, QColor(0, 0, 0, 120));
 }
 
 bool Advertisement::eventFilter(QObject *obj, QEvent *event) {
