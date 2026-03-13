@@ -9,7 +9,7 @@ class FileTreeWidget;
 
 class FileManagerTool : public QObject, public ToolInterface {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.ape.hoi4toolstudio.ToolInterface" FILE "metadata.json")
+    Q_PLUGIN_METADATA(IID "com.ape.hoi4toolstudio.ToolInterface")
     Q_INTERFACES(ToolInterface)
 
 public:
