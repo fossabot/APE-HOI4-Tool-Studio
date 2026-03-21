@@ -4,7 +4,7 @@
 </a>
 <h1>APE HOI4 Tool Studio</a></h1>
 <p><strong>面向《Hearts of Iron IV》创作生态的模块化桌面工具工作台</strong><br>
- 一个围绕 <b>HOI4 工具链</b>、<b>模块化 Tool / Plugin 架构</b>、<b>桌面端扩展生态</b> 打造的现代化工作台项目。</p>
+ 一个围绕 <b>HOI4 工具链</b>、<b>模块化 Tool / Plugin 架构</b>、<b>桌面端扩展生态</b> 打造的现代化工作室式项目。</p>
 </div>
 <div align="center">
 <p>
